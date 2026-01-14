@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Audio Bible Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a3a5f 0%, #0d1b2a 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #f8c471;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #a3c4dc;
+            font-weight: 300;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .testament-selector {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .testament-btn {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: #ccc;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .testament-btn.active {
+            background-color: #2c5282;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .books-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 350px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .books-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #f8c471;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 10px 0;
+            z-index: 1;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .book-btn {
+            padding: 12px 8px;
+            background-color: rgba(41, 128, 185, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .book-btn:hover {
+            background-color: rgba(52, 152, 219, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .book-btn.active {
+            background-color: #3498db;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .chapters-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+        
+        .chapters-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #f8c471;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px 5px;
+        }
+        
+        .chapter-btn {
+            padding: 12px 5px;
+            background-color: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .chapter-btn:hover {
+            background-color: rgba(46, 204, 113, 0.4);
+        }
+        
+        .chapter-btn.active {
+            background-color: #2ecc71;
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+        
+        .audio-player {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .now-playing {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #f8c471;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .audio-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .time {
+            font-size: 0.9rem;
+            color: #a3c4dc;
+            min-width: 45px;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .control-btn {
+            background-color: rgba(52, 152, 219, 0.3);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background-color: rgba(52, 152, 219, 0.7);
+            transform: scale(1.05);
+        }
+        
+        .control-btn.play {
+            background-color: #3498db;
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+        }
+        
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .volume-icon {
+            color: #a3c4dc;
+            font-size: 1.2rem;
+        }
+        
+        .volume-slider {
+            flex: 1;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #3498db;
+            cursor: pointer;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #a3c4dc;
+            font-size: 1.1rem;
+        }
+        
+        .book-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .book-description {
+            font-size: 0.9rem;
+            color: #a3c4dc;
+            font-style: italic;
+        }
+        
+        .chapter-count {
+            font-size: 0.9rem;
+            color: #a3c4dc;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            
+            .chapters-grid {
+                grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            }
+            
+            .control-buttons {
+                gap: 20px;
+            }
+            
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+            
+            .control-btn.play {
+                width: 60px;
+                height: 60px;
+                font-size: 1.6rem;
+            }
+            
+            .chapters-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            }
+            
+            .book-btn {
+                font-size: 0.9rem;
+                padding: 10px 5px;
+            }
+            
+            .chapters-grid {
+                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            }
+            
+            .chapter-btn {
+                padding: 10px 3px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Scrollbar styling */
+        .books-container::-webkit-scrollbar,
+        .chapters-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .books-container::-webkit-scrollbar-track,
+        .chapters-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .books-container::-webkit-scrollbar-thumb,
+        .chapters-grid::-webkit-scrollbar-thumb {
+            background: rgba(52, 152, 219, 0.5);
+            border-radius: 10px;
+        }
+        
+        .books-container::-webkit-scrollbar-thumb:hover,
+        .chapters-grid::-webkit-scrollbar-thumb:hover {
+            background: rgba(52, 152, 219, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bible"></i> Complete Audio Bible</h1>
+            <p class="subtitle">Listen to all 66 books of the Bible in French</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="testament-selector">
+                <button class="testament-btn active" id="old-testament-btn">Old Testament (39 books)</button>
+                <button class="testament-btn" id="new-testament-btn">New Testament (27 books)</button>
+            </div>
+            
+            <div class="books-container">
+                <h2 class="books-title"><i class="fas fa-book"></i> Books of the <span id="current-testament-name">Old Testament</span></h2>
+                <div id="books-grid" class="books-grid">
+                    <!-- Books will be loaded here dynamically -->
+                </div>
+                <div class="loading" id="books-loading">Loading books...</div>
+            </div>
+            
+            <div class="chapters-container hidden" id="chapters-container">
+                <div class="chapters-title">
+                    <span><i class="fas fa-list-ol"></i> Chapters of <span id="selected-book-name">Genèse</span></span>
+                    <div class="book-info">
+                        <span class="book-description" id="book-description"></span>
+                        <span class="chapter-count" id="chapter-count">50 chapters</span>
+                    </div>
+                </div>
+                <div id="chapters-grid" class="chapters-grid">
+                    <!-- Chapters will be loaded here dynamically -->
+                </div>
+                <div class="loading" id="chapters-loading">Loading chapters...</div>
+            </div>
+            
+            <div class="audio-player hidden" id="audio-player">
+                <h2 class="now-playing"><i class="fas fa-headphones"></i> Now Playing</h2>
+                <div id="now-playing-text">Select a chapter to play</div>
+                
+                <div class="audio-controls">
+                    <div class="progress-container">
+                        <span class="time" id="current-time">0:00</span>
+                        <div class="progress-bar" id="progress-bar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                        <span class="time" id="duration">0:00</span>
+                    </div>
+                    
+                    <div class="control-buttons">
+                        <button class="control-btn" id="prev-btn" title="Previous chapter">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="control-btn play" id="play-pause-btn" title="Play/Pause">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="control-btn" id="next-btn" title="Next chapter">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="volume-container">
+                        <i class="fas fa-volume-up volume-icon"></i>
+                        <input type="range" min="0" max="100" value="80" class="volume-slider" id="volume-slider">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Complete Bible data structure with ALL 66 books
+        const bibleData = {
+            "Ancien_testament": {
+                "name": "Old Testament",
+                "books": [
+                    // Pentateuch (5 books)
+                    { "id": "Genese", "name": "Genèse", "chapters": 50, "description": "The book of beginnings" },
+                    { "id": "Exode", "name": "Exode", "chapters": 40, "description": "Israel's departure from Egypt" },
+                    { "id": "Levifique", "name": "Lévitique", "chapters": 27, "description": "Laws of worship and sacrifice" },
+                    { "id": "Nombres", "name": "Nombres", "chapters": 36, "description": "Israel's wilderness journey" },
+                    { "id": "Deuteronome", "name": "Deutéronome", "chapters": 34, "description": "Moses' final speeches" },
+                    
+                    // Historical Books (12 books)
+                    { "id": "Josue", "name": "Josué", "chapters": 24, "description": "Conquest of Canaan" },
+                    { "id": "Juges", "name": "Juges", "chapters": 21, "description": "Israel's cycle of disobedience" },
+                    { "id": "Ruth", "name": "Ruth", "chapters": 4, "description": "Story of loyalty and redemption" },
+                    { "id": "1_Samuel", "name": "1 Samuel", "chapters": 31, "description": "Samuel and King Saul" },
+                    { "id": "2_Samuel", "name": "2 Samuel", "chapters": 24, "description": "King David's reign" },
+                    { "id": "1_Rois", "name": "1 Rois", "chapters": 22, "description": "Solomon and divided kingdom" },
+                    { "id": "2_Rois", "name": "2 Rois", "chapters": 25, "description": "Kings of Israel and Judah" },
+                    { "id": "1_Chroniques", "name": "1 Chroniques", "chapters": 29, "description": "David's reign from priestly view" },
+                    { "id": "2_Chroniques", "name": "2 Chroniques", "chapters": 36, "description": "History of Judah" },
+                    { "id": "Esdras", "name": "Esdras", "chapters": 10, "description": "Return from exile" },
+                    { "id": "Nehemie", "name": "Néhémie", "chapters": 13, "description": "Rebuilding Jerusalem's walls" },
+                    { "id": "Esther", "name": "Esther", "chapters": 10, "description": "Queen Esther saves her people" },
+                    
+                    // Wisdom Books (5 books)
+                    { "id": "Job", "name": "Job", "chapters": 42, "description": "Suffering and God's sovereignty" },
+                    { "id": "Psaumes", "name": "Psaumes", "chapters": 150, "description": "Songs and prayers" },
+                    { "id": "Proverbes", "name": "Proverbes", "chapters": 31, "description": "Wisdom literature" },
+                    { "id": "Ecclesiaste", "name": "Ecclésiaste", "chapters": 12, "description": "The meaning of life" },
+                    { "id": "Cantique_des_Cantiques", "name": "Cantique des Cantiques", "chapters": 8, "description": "Love poetry" },
+                    
+                    // Major Prophets (5 books)
+                    { "id": "Esaie", "name": "Ésaïe", "chapters": 66, "description": "Prophet of redemption" },
+                    { "id": "Jeremie", "name": "Jérémie", "chapters": 52, "description": "Prophet to Judah" },
+                    { "id": "Lamentations", "name": "Lamentations", "chapters": 5, "description": "Mourning Jerusalem's destruction" },
+                    { "id": "Ezechiel", "name": "Ézéchiel", "chapters": 48, "description": "Prophet to exiles" },
+                    { "id": "Daniel", "name": "Daniel", "chapters": 12, "description": "Prophet in Babylon" },
+                    
+                    // Minor Prophets (12 books)
+                    { "id": "Osee", "name": "Osée", "chapters": 14, "description": "Prophet of unfaithful Israel" },
+                    { "id": "Joel", "name": "Joël", "chapters": 3, "description": "Day of the Lord" },
+                    { "id": "Amos", "name": "Amos", "chapters": 9, "description": "Prophet of social justice" },
+                    { "id": "Abdias", "name": "Abdias", "chapters": 1, "description": "Shortest OT book" },
+                    { "id": "Jonas", "name": "Jonas", "chapters": 4, "description": "Prophet to Nineveh" },
+                    { "id": "Michee", "name": "Michée", "chapters": 7, "description": "Prophet of judgment and hope" },
+                    { "id": "Nahum", "name": "Nahum", "chapters": 3, "description": "Judgment on Nineveh" },
+                    { "id": "Habacuc", "name": "Habacuc", "chapters": 3, "description": "Prophet's dialogue with God" },
+                    { "id": "Sophonie", "name": "Sophonie", "chapters": 3, "description": "Day of the Lord's judgment" },
+                    { "id": "Aggee", "name": "Aggée", "chapters": 2, "description": "Rebuild the temple" },
+                    { "id": "Zacharie", "name": "Zacharie", "chapters": 14, "description": "Prophet of restoration" },
+                    { "id": "Malachie", "name": "Malachie", "chapters": 4, "description": "Last OT prophet" }
+                ]
+            },
+            "Nouveau_testament": {
+                "name": "New Testament",
+                "books": [
+                    // Gospels (4 books)
+                    { "id": "Matthieu", "name": "Matthieu", "chapters": 28, "description": "Gospel of Jesus Christ" },
+                    { "id": "Marc", "name": "Marc", "chapters": 16, "description": "The shortest Gospel" },
+                    { "id": "Luc", "name": "Luc", "chapters": 24, "description": "Gospel for the Gentiles" },
+                    { "id": "Jean", "name": "Jean", "chapters": 21, "description": "The spiritual Gospel" },
+                    
+                    // Historical Book (1 book)
+                    { "id": "Actes", "name": "Actes", "chapters": 28, "description": "Early church history" },
+                    
+                    // Pauline Epistles (13 books)
+                    { "id": "Romains", "name": "Romains", "chapters": 16, "description": "Paul's letter to Romans" },
+                    { "id": "1_Corinthiens", "name": "1 Corinthiens", "chapters": 16, "description": "Paul's first letter to Corinthians" },
+                    { "id": "2_Corinthiens", "name": "2 Corinthiens", "chapters": 13, "description": "Paul's second letter to Corinthians" },
+                    { "id": "Galates", "name": "Galates", "chapters": 6, "description": "Justification by faith" },
+                    { "id": "Ephesiens", "name": "Éphésiens", "chapters": 6, "description": "Unity in the church" },
+                    { "id": "Philippiens", "name": "Philippiens", "chapters": 4, "description": "Joy in Christ" },
+                    { "id": "Colossiens", "name": "Colossiens", "chapters": 4, "description": "Supremacy of Christ" },
+                    { "id": "1_Thessaloniciens", "name": "1 Thessaloniciens", "chapters": 5, "description": "Second coming of Christ" },
+                    { "id": "2_Thessaloniciens", "name": "2 Thessaloniciens", "chapters": 3, "description": "Correction about the end times" },
+                    { "id": "1_Timothee", "name": "1 Timothée", "chapters": 6, "description": "Instructions to Timothy" },
+                    { "id": "2_Timothee", "name": "2 Timothée", "chapters": 4, "description": "Paul's final letter" },
+                    { "id": "Tite", "name": "Tite", "chapters": 3, "description": "Instructions to Titus" },
+                    { "id": "Philemon", "name": "Philémon", "chapters": 1, "description": "Paul's shortest letter" },
+                    
+                    // General Epistles (8 books)
+                    { "id": "Hebreux", "name": "Hébreux", "chapters": 13, "description": "Superiority of Christ" },
+                    { "id": "Jacques", "name": "Jacques", "chapters": 5, "description": "Faith and works" },
+                    { "id": "1_Pierre", "name": "1 Pierre", "chapters": 5, "description": "Hope in suffering" },
+                    { "id": "2_Pierre", "name": "2 Pierre", "chapters": 3, "description": "Warning against false teachers" },
+                    { "id": "1_Jean", "name": "1 Jean", "chapters": 5, "description": "Love and truth" },
+                    { "id": "2_Jean", "name": "2 Jean", "chapters": 1, "description": "Walk in truth" },
+                    { "id": "3_Jean", "name": "3 Jean", "chapters": 1, "description": "Hospitality to missionaries" },
+                    { "id": "Jude", "name": "Jude", "chapters": 1, "description": "Contend for the faith" },
+                    
+                    // Prophecy (1 book)
+                    { "id": "Apocalypse", "name": "Apocalypse", "chapters": 22, "description": "Revelation of Jesus Christ" }
+                ]
+            }
+        };
+
+        // Current state
+        let currentTestament = "Ancien_testament";
+        let currentBook = null;
+        let currentChapter = 1;
+        let audio = null;
+        let isPlaying = false;
+        
+        // DOM Elements
+        const oldTestamentBtn = document.getElementById('old-testament-btn');
+        const newTestamentBtn = document.getElementById('new-testament-btn');
+        const currentTestamentName = document.getElementById('current-testament-name');
+        const booksGrid = document.getElementById('books-grid');
+        const booksLoading = document.getElementById('books-loading');
+        const chaptersContainer = document.getElementById('chapters-container');
+        const selectedBookName = document.getElementById('selected-book-name');
+        const bookDescription = document.getElementById('book-description');
+        const chapterCount = document.getElementById('chapter-count');
+        const chaptersGrid = document.getElementById('chapters-grid');
+        const chaptersLoading = document.getElementById('chapters-loading');
+        const audioPlayer = document.getElementById('audio-player');
+        const nowPlayingText = document.getElementById('now-playing-text');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progress = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volume-slider');
+        
+        // Initialize the app
+        function init() {
+            loadBooks(currentTestament);
+            
+            // Event listeners for testament selection
+            oldTestamentBtn.addEventListener('click', () => {
+                setActiveTestament('Ancien_testament');
+            });
+            
+            newTestamentBtn.addEventListener('click', () => {
+                setActiveTestament('Nouveau_testament');
+            });
+            
+            // Audio control event listeners
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            prevBtn.addEventListener('click', playPreviousChapter);
+            nextBtn.addEventListener('click', playNextChapter);
+            progressBar.addEventListener('click', setProgress);
+            volumeSlider.addEventListener('input', setVolume);
+            
+            // Initialize audio object
+            audio = new Audio();
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('loadedmetadata', () => {
+                durationEl.textContent = formatTime(audio.duration);
+            });
+            audio.addEventListener('ended', playNextChapter);
+        }
+        
+        // Set active testament and load its books
+        function setActiveTestament(testament) {
+            currentTestament = testament;
+            currentBook = null;
+            
+            // Update UI
+            if (testament === 'Ancien_testament') {
+                oldTestamentBtn.classList.add('active');
+                newTestamentBtn.classList.remove('active');
+            } else {
+                newTestamentBtn.classList.add('active');
+                oldTestamentBtn.classList.remove('active');
+            }
+            
+            // Update testament name
+            currentTestamentName.textContent = bibleData[testament].name;
+            
+            // Hide chapters and audio player
+            chaptersContainer.classList.add('hidden');
+            audioPlayer.classList.add('hidden');
+            
+            // Load books for the selected testament
+            loadBooks(testament);
+        }
+        
+        // Load books for the selected testament
+        function loadBooks(testament) {
+            booksGrid.innerHTML = '';
+            booksLoading.classList.remove('hidden');
+            
+            // Simulate loading delay for better UX
+            setTimeout(() => {
+                const books = bibleData[testament].books;
+                
+                books.forEach(book => {
+                    const bookButton = document.createElement('button');
+                    bookButton.className = 'book-btn';
+                    bookButton.textContent = book.name; // Simple text, no numbering
+                    bookButton.dataset.bookId = book.id;
+                    
+                    bookButton.addEventListener('click', () => {
+                        // Set current book
+                        currentBook = book;
+                        
+                        // Update UI
+                        document.querySelectorAll('.book-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        bookButton.classList.add('active');
+                        
+                        // Load chapters for this book
+                        loadChapters(book);
+                    });
+                    
+                    booksGrid.appendChild(bookButton);
+                });
+                
+                booksLoading.classList.add('hidden');
+            }, 300);
+        }
+        
+        // Load chapters for the selected book
+        function loadChapters(book) {
+            selectedBookName.textContent = book.name;
+            bookDescription.textContent = book.description;
+            chapterCount.textContent = `${book.chapters} ${book.chapters === 1 ? 'chapter' : 'chapters'}`;
+            chaptersGrid.innerHTML = '';
+            chaptersLoading.classList.remove('hidden');
+            chaptersContainer.classList.remove('hidden');
+            
+            // Scroll chapters container into view on mobile
+            if (window.innerWidth <= 768) {
+                chaptersContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                for (let i = 1; i <= book.chapters; i++) {
+                    const chapterButton = document.createElement('button');
+                    chapterButton.className = 'chapter-btn';
+                    chapterButton.textContent = i;
+                    chapterButton.dataset.chapter = i;
+                    
+                    chapterButton.addEventListener('click', () => {
+                        // Set current chapter
+                        currentChapter = i;
+                        
+                        // Update UI
+                        document.querySelectorAll('.chapter-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        chapterButton.classList.add('active');
+                        
+                        // Load and play audio for this chapter
+                        loadAudio(book, i);
+                    });
+                    
+                    chaptersGrid.appendChild(chapterButton);
+                }
+                
+                chaptersLoading.classList.add('hidden');
+                
+                // Auto-select first chapter
+                if (book.chapters > 0) {
+                    const firstChapterBtn = chaptersGrid.querySelector('.chapter-btn');
+                    if (firstChapterBtn) {
+                        firstChapterBtn.click();
+                    }
+                }
+            }, 300);
+        }
+        
+        // Load audio for the selected chapter
+        function loadAudio(book, chapter) {
+            // Construct the audio file path based on your folder structure
+            const audioPath = `My_Bible/${currentTestament}/${book.id}/${book.id}_${chapter.toString().padStart(2, '0')}.mp3`;
+            
+            // Update now playing text
+            nowPlayingText.textContent = `${book.name} - Chapter ${chapter}`;
+            
+            // Set audio source to your actual file
+            audio.src = audioPath;
+            
+            // Show audio player
+            audioPlayer.classList.remove('hidden');
+            
+            // Scroll audio player into view on mobile
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    audioPlayer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            }
+            
+            // Play audio
+            playAudio();
+        }
+        
+        // Play audio
+        function playAudio() {
+            audio.play()
+                .then(() => {
+                    isPlaying = true;
+                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    playPauseBtn.title = "Pause";
+                })
+                .catch(error => {
+                    console.log("Error playing audio:", error);
+                    nowPlayingText.textContent = `${currentBook.name} - Chapter ${currentChapter} (Error loading audio)`;
+                });
+        }
+        
+        // Pause audio
+        function pauseAudio() {
+            audio.pause();
+            isPlaying = false;
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            playPauseBtn.title = "Play";
+        }
+        
+        // Toggle play/pause
+        function togglePlayPause() {
+            if (isPlaying) {
+                pauseAudio();
+            } else {
+                playAudio();
+            }
+        }
+        
+        // Play previous chapter
+        function playPreviousChapter() {
+            if (currentBook && currentChapter > 1) {
+                currentChapter--;
+                loadAudio(currentBook, currentChapter);
+                
+                // Update chapter button UI
+                document.querySelectorAll('.chapter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (parseInt(btn.dataset.chapter) === currentChapter) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        // Play next chapter
+        function playNextChapter() {
+            if (currentBook && currentChapter < currentBook.chapters) {
+                currentChapter++;
+                loadAudio(currentBook, currentChapter);
+                
+                // Update chapter button UI
+                document.querySelectorAll('.chapter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (parseInt(btn.dataset.chapter) === currentChapter) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            if (audio.duration) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progress.style.width = `${percent}%`;
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+            }
+        }
+        
+        // Set progress when user clicks on progress bar
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            
+            if (duration) {
+                audio.currentTime = (clickX / width) * duration;
+            }
+        }
+        
+        // Set volume
+        function setVolume() {
+            audio.volume = this.value / 100;
+        }
+        
+        // Format time in minutes:seconds
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

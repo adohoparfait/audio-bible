@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Audio Bible Player</title>
+    <title>Ma Bible Audio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -414,27 +414,27 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-bible"></i> Complete Audio Bible</h1>
-            <p class="subtitle">Listen to all 66 books of the Bible in French</p>
+            <h1><i class="fas fa-bible"></i> Bible Audio Complète </h1>
+            <p class="subtitle">Ecouter tous les 66 livres de la Bible en Français</p>
         </header>
         
         <div class="main-content">
             <div class="testament-selector">
-                <button class="testament-btn active" id="old-testament-btn">Old Testament (39 books)</button>
-                <button class="testament-btn" id="new-testament-btn">New Testament (27 books)</button>
+                <button class="testament-btn active" id="old-testament-btn">Ancien Testament (39 livres)</button>
+                <button class="testament-btn" id="new-testament-btn">Nouveau Testament (27 livres)</button>
             </div>
             
             <div class="books-container">
-                <h2 class="books-title"><i class="fas fa-book"></i> Books of the <span id="current-testament-name">Old Testament</span></h2>
+                <h2 class="books-title"><i class="fas fa-book"></i> Livres de <span id="current-testament-name">Ancien Testament</span></h2>
                 <div id="books-grid" class="books-grid">
                     <!-- Books will be loaded here dynamically -->
                 </div>
-                <div class="loading" id="books-loading">Loading books...</div>
+                <div class="loading" id="books-loading">Charge les livres...</div>
             </div>
             
             <div class="chapters-container hidden" id="chapters-container">
                 <div class="chapters-title">
-                    <span><i class="fas fa-list-ol"></i> Chapters of <span id="selected-book-name">Genèse</span></span>
+                    <span><i class="fas fa-list-ol"></i> Chapitres de <span id="selected-book-name">Genèse</span></span>
                     <div class="book-info">
                         <span class="book-description" id="book-description"></span>
                         <span class="chapter-count" id="chapter-count">50 chapters</span>
@@ -443,12 +443,12 @@
                 <div id="chapters-grid" class="chapters-grid">
                     <!-- Chapters will be loaded here dynamically -->
                 </div>
-                <div class="loading" id="chapters-loading">Loading chapters...</div>
+                <div class="loading" id="chapters-loading">Charge les chapitres...</div>
             </div>
             
             <div class="audio-player hidden" id="audio-player">
-                <h2 class="now-playing"><i class="fas fa-headphones"></i> Now Playing</h2>
-                <div id="now-playing-text">Select a chapter to play</div>
+                <h2 class="now-playing"><i class="fas fa-headphones"></i> Jouant Maintenant</h2>
+                <div id="now-playing-text">Sélectionner un chapitre pour écouter</div>
                 
                 <div class="audio-controls">
                     <div class="progress-container">
@@ -484,7 +484,7 @@
         // Complete Bible data structure with ALL 66 books
         const bibleData = {
             "Ancien_testament": {
-                "name": "Old Testament",
+                "name": "Ancien Testament",
                 "books": [
                     // Pentateuch (5 books)
                     { "id": "Genese", "name": "Genèse", "chapters": 50, "description": "The book of beginnings" },
@@ -504,7 +504,7 @@
                     { "id": "1_Chroniques", "name": "1 Chroniques", "chapters": 29, "description": "David's reign from priestly view" },
                     { "id": "2_Chroniques", "name": "2 Chroniques", "chapters": 36, "description": "History of Judah" },
                     { "id": "Esdras", "name": "Esdras", "chapters": 10, "description": "Return from exile" },
-                    { "id": "Nehemie", "name": "Néhémie", "chapters": 13, "description": "Rebuilding Jerusalem's walls" },
+                    { "id": "Neh emie", "name": "Néhémie", "chapters": 13, "description": "Rebuilding Jerusalem's walls" },
                     { "id": "Esther", "name": "Esther", "chapters": 10, "description": "Queen Esther saves her people" },
                     
                     // Wisdom Books (5 books)
@@ -537,7 +537,7 @@
                 ]
             },
             "Nouveau_testament": {
-                "name": "New Testament",
+                "name": "Nouveau Testament",
                 "books": [
                     // Gospels (4 books)
                     { "id": "Matthieu", "name": "Matthieu", "chapters": 28, "description": "Gospel of Jesus Christ" },
@@ -703,7 +703,7 @@
         function loadChapters(book) {
             selectedBookName.textContent = book.name;
             bookDescription.textContent = book.description;
-            chapterCount.textContent = `${book.chapters} ${book.chapters === 1 ? 'chapter' : 'chapters'}`;
+            chapterCount.textContent = `${book.chapters} ${book.chapters === 1 ? 'chapter' : 'chapitres'}`;
             chaptersGrid.innerHTML = '';
             chaptersLoading.classList.remove('hidden');
             chaptersContainer.classList.remove('hidden');
